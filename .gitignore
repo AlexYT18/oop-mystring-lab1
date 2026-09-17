@@ -1,0 +1,14 @@
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+*.pdb
+*.ilk
+*.a
+*.lib
+build/
+__pycache__/
+.pytest_cache/
+.DS_Store
