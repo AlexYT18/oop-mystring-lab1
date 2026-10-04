@@ -3,7 +3,10 @@
 #include "MyString.h"
 
 namespace py = pybind11;
-
+/*Magic methods — специальные методы Python с двойными подчёркиваниями,
+которые автоматически вызываются операторами и встроенными функциями.
+В обёртке pybind11 методы __add__, __len__, __str__ и тд
+связывают операции Python с соответствующими методами и операторами класса MyString на C++ */
 PYBIND11_MODULE(mystring, module)
 {
     py::class_<MyString>(module, "MyString")
@@ -50,6 +53,7 @@ PYBIND11_MODULE(mystring, module)
         .def("find", static_cast<std::size_t (MyString::*)(const char*) const>(&MyString::find))
         .def("find", static_cast<std::size_t (MyString::*)(const char*, int) const>(&MyString::find))
         .def("compare", &MyString::compare)
+		//Magic methods
         .def("__len__", &MyString::size)
         .def("__str__", [](const MyString& value) {
             return std::string(value.c_str(), value.size());

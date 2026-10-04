@@ -102,9 +102,6 @@ private:
 
     void ensure_capacity(std::size_t required_capacity);
     void assign(const char* source, std::size_t source_size);
-    void splice(std::size_t index, std::size_t erase_count,
-                const char* source, std::size_t source_size,
-                std::size_t source_index, std::size_t source_count);
     std::size_t find_data(const char* source, std::size_t source_size,
                           std::size_t index) const;
 };
