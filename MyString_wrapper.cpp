@@ -9,9 +9,13 @@ namespace py = pybind11;
 связывают операции Python с соответствующими методами и операторами класса MyString на C++ */
 PYBIND11_MODULE(mystring, module)
 {
+    py::register_exception<MyStringConversionError>(module, "MyStringConversionError");
+
     py::class_<MyString>(module, "MyString")
         .def(py::init<>())
         .def(py::init<const char*>())
+        .def(py::init<int>())
+        .def(py::init<double>())
         .def(py::init<const char*, int>())
         .def(py::init<int, char>())
         .def(py::init<const MyString&>())
@@ -53,7 +57,12 @@ PYBIND11_MODULE(mystring, module)
         .def("find", static_cast<std::size_t (MyString::*)(const char*) const>(&MyString::find))
         .def("find", static_cast<std::size_t (MyString::*)(const char*, int) const>(&MyString::find))
         .def("compare", &MyString::compare)
-		//Magic methods
+        .def("at", [](const MyString& value, int index) {
+            return value.at(index);
+        })
+        .def("to_int", &MyString::to_int)
+        .def("to_float", &MyString::to_float)
+        //Magic methods
         .def("__len__", &MyString::size)
         .def("__str__", [](const MyString& value) {
             return std::string(value.c_str(), value.size());

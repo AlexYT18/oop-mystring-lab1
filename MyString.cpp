@@ -1,8 +1,11 @@
 #include "MyString.h"
 
+#include <charconv>
 #include <cstring>
+#include <fstream>
 #include <ostream>
 #include <stdexcept>
+#include <system_error>
 
 namespace
 {
@@ -33,6 +36,11 @@ void CheckSourceRange(std::size_t source_size, std::size_t source_index,
 }
 }
 
+MyStringConversionError::MyStringConversionError(const char* message)
+    : std::invalid_argument(message)
+{
+}
+
 const std::size_t MyString::npos = static_cast<std::size_t>(-1);
 
 MyString::MyString()
@@ -57,6 +65,38 @@ MyString::MyString(const MyString& source)
     : data_(nullptr), size_(0), capacity_(0)
 {
     assign(source.c_str(), source.size());
+}
+
+MyString::MyString(MyString&& source) noexcept
+    : data_(source.data_), size_(source.size_), capacity_(source.capacity_)
+{
+    source.data_ = nullptr;
+    source.size_ = 0;
+    source.capacity_ = 0;
+}
+
+MyString::MyString(int value)
+    : data_(nullptr), size_(0), capacity_(0)
+{
+    char buffer[32];
+    std::to_chars_result result = std::to_chars(buffer, buffer + sizeof(buffer), value);
+    if (result.ec != std::errc())
+    {
+        throw MyStringConversionError("failed to convert integer to MyString");
+    }
+    assign(buffer, static_cast<std::size_t>(result.ptr - buffer));
+}
+
+MyString::MyString(double value)
+    : data_(nullptr), size_(0), capacity_(0)
+{
+    char buffer[128];
+    std::to_chars_result result = std::to_chars(buffer, buffer + sizeof(buffer), value);
+    if (result.ec != std::errc())
+    {
+        throw MyStringConversionError("failed to convert floating-point value to MyString");
+    }
+    assign(buffer, static_cast<std::size_t>(result.ptr - buffer));
 }
 
 MyString::MyString(const char* source, int count)
@@ -123,6 +163,22 @@ MyString& MyString::operator=(const MyString& source)
     if (this != &source)
     {
         assign(source.c_str(), source.size());
+    }
+    return *this;
+}
+
+MyString& MyString::operator=(MyString&& source) noexcept
+{
+    if (this != &source)
+    {
+        delete[] data_;
+        data_ = source.data_;
+        size_ = source.size_;
+        capacity_ = source.capacity_;
+
+        source.data_ = nullptr;
+        source.size_ = 0;
+        source.capacity_ = 0;
     }
     return *this;
 }
@@ -531,6 +587,70 @@ const char& MyString::operator[](int index) const
     return data_[checked_index];
 }
 
+char& MyString::at(int index)
+{
+    return (*this)[index];
+}
+
+const char& MyString::at(int index) const
+{
+    return (*this)[index];
+}
+
+int MyString::to_int() const
+{
+    const char* first = c_str();
+    const char* last = first + size_;
+    if (first == last)
+    {
+        throw MyStringConversionError("MyString does not contain an integer");
+    }
+
+    if (*first == '+')
+    {
+        ++first;
+        if (first == last)
+        {
+            throw MyStringConversionError("MyString does not contain an integer");
+        }
+    }
+
+    int value = 0;
+    std::from_chars_result result = std::from_chars(first, last, value);
+    if (result.ec != std::errc() || result.ptr != last)
+    {
+        throw MyStringConversionError("MyString does not contain a valid integer");
+    }
+    return value;
+}
+
+float MyString::to_float() const
+{
+    const char* first = c_str();
+    const char* last = first + size_;
+    if (first == last)
+    {
+        throw MyStringConversionError("MyString does not contain a floating-point value");
+    }
+
+    if (*first == '+')
+    {
+        ++first;
+        if (first == last)
+        {
+            throw MyStringConversionError("MyString does not contain a floating-point value");
+        }
+    }
+
+    float value = 0.0F;
+    std::from_chars_result result = std::from_chars(first, last, value);
+    if (result.ec != std::errc() || result.ptr != last)
+    {
+        throw MyStringConversionError("MyString does not contain a valid floating-point value");
+    }
+    return value;
+}
+
 int MyString::compare(const MyString& source) const
 {
     std::size_t common_size = size_ < source.size_ ? size_ : source.size_;
@@ -688,18 +808,62 @@ std::size_t MyString::find_data(const char* source, std::size_t source_size,
         return npos;
     }
 
-    for (std::size_t current = index; current <= size_ - source_size; ++current)
+    // For one pattern, Aho-Corasick failure links are its prefix links.
+    std::size_t* failure = new std::size_t[source_size];
+    failure[0] = 0;
+    for (std::size_t current = 1, matched = 0; current < source_size; ++current)
     {
-        if (std::memcmp(data_ + current, source, source_size) == 0)
+        while (matched != 0 && source[current] != source[matched])
         {
-            return current;
+            matched = failure[matched - 1];
+        }
+        if (source[current] == source[matched])
+        {
+            ++matched;
+        }
+        failure[current] = matched;
+    }
+
+    std::size_t result = npos;
+    std::size_t matched = 0;
+    for (std::size_t current = index; current < size_; ++current)
+    {
+        while (matched != 0 && data_[current] != source[matched])
+        {
+            matched = failure[matched - 1];
+        }
+        if (data_[current] == source[matched])
+        {
+            ++matched;
+        }
+        if (matched == source_size)
+        {
+            result = current + 1 - source_size;
+            break;
         }
     }
-    return npos;
+    delete[] failure;
+    return result;
 }
 
 std::ostream& operator<<(std::ostream& stream, const MyString& value)
 {
     stream.write(value.c_str(), static_cast<std::streamsize>(value.size()));
+    return stream;
+}
+
+std::ofstream& operator<<(std::ofstream& stream, const MyString& value)
+{
+    stream.write(value.c_str(), static_cast<std::streamsize>(value.size()));
+    return stream;
+}
+
+std::ifstream& operator>>(std::ifstream& stream, MyString& value)
+{
+    std::string buffer;
+    if (stream >> buffer)
+    {
+        value = buffer;
+    }
     return stream;
 }
