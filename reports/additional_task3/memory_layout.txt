@@ -1,0 +1,16 @@
+MyString x64 layout used by the Release build
+==============================================
+
+Object address + 0x00: data_     (8 bytes, char*)
+Object address + 0x08: size_     (8 bytes, std::size_t)
+Object address + 0x10: capacity_ (8 bytes, std::size_t)
+
+The program creates MyString(128, ' '). Therefore:
+- capacity_ = 129;
+- the data buffer contains at least 129 bytes including '\0';
+- only the first 35 bytes and size_ need to be changed in the debugger;
+- capacity_ must remain unchanged.
+
+Target text:
+A picture is worth a thousand words.
+Target size: 36

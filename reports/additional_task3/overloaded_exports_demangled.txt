@@ -1,0 +1,15 @@
+﻿Selected overloaded exports and demangled names
+==============================================
+
+?append@MyString@@QEAAAEAV1@HD@Z
+Microsoft (R) C++ Name Undecorator Copyright (C) Microsoft Corporation. All rights reserved.  Undecoration of :- "?append@MyString@@QEAAAEAV1@HD@Z" is :- "public: class MyString & __ptr64 __cdecl MyString::append(int,char) __ptr64" 
+
+?append@MyString@@QEAAAEAV1@PEBD@Z
+Microsoft (R) C++ Name Undecorator Copyright (C) Microsoft Corporation. All rights reserved.  Undecoration of :- "?append@MyString@@QEAAAEAV1@PEBD@Z" is :- "public: class MyString & __ptr64 __cdecl MyString::append(char const * __ptr64) __ptr64" 
+
+?append@MyString@@QEAAAEAV1@AEBV1@@Z
+Microsoft (R) C++ Name Undecorator Copyright (C) Microsoft Corporation. All rights reserved.  Undecoration of :- "?append@MyString@@QEAAAEAV1@AEBV1@@Z" is :- "public: class MyString & __ptr64 __cdecl MyString::append(class MyString const & __ptr64) __ptr64" 
+
+?append@MyString@@QEAAAEAV1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
+Microsoft (R) C++ Name Undecorator Copyright (C) Microsoft Corporation. All rights reserved.  Undecoration of :- "?append@MyString@@QEAAAEAV1@AEBV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z" is :- "public: class MyString & __ptr64 __cdecl MyString::append(class std::basic_string<char,struct std::char_traits<char>,class std::allocator<char> > const & __ptr64) __ptr64" 
+

@@ -1,0 +1,61 @@
+Possible file format: MS-DOS executable (EXE) (C:\Work Space\IDA Professional 9.3\loaders\dos.dll)
+Possible file format: Portable executable for AMD64 (PE) (C:\Work Space\IDA Professional 9.3\loaders\pe.dll)
+
+  bytes   pages size description
+--------- ----- ---- --------------------------------------------
+  1105920   135 8192 allocating memory for b-tree...
+  1105920   135 8192 allocating memory for virtual array...
+   262144    32 8192 allocating memory for name pointers...
+-----------------------------------------------------------------
+  2473984            total memory allocated
+
+Loading processor module C:\Work Space\IDA Professional 9.3\procs\pc.dll for metapc...OK
+Autoanalysis subsystem has been initialized.
+Loading file 'C:\Work Space\OOP\1\additional_task3\build\MyString.dll' into database...
+Detected file format: Portable executable for AMD64 (PE)
+  0. Creating a new segment  (0000000180001000-0000000180018000) ... ... OK
+  1. Creating a new segment  (0000000180018000-0000000180042000) ... ... OK
+  2. Creating a new segment  (0000000180042000-0000000180043000) ... ... OK
+  3. Creating a new segment  (0000000180043000-0000000180045000) ... ... OK
+  4. Creating a new segment  (0000000180045000-0000000180047000) ... ... OK
+  5. Creating a new segment  (0000000180047000-0000000180048000) ... ... OK
+Reading exports directory...
+Reading imports directory...
+Reading exception directory (.pdata)...
+Applying fixups...
+  6. Creating a new segment  (0000000180045470-0000000180047000) ... ... OK
+PDB: using PDBIDA provider
+PDB: loading C:\Work Space\OOP\1\additional_task3\build\MyString.pdb
+Type library 'mssdk64_win7' loaded. Applying types...
+Types applied to 31 names.
+PDB: loaded 898 types
+18000B9F0: stkvar '__fd' with no type info
+PDB: total 933 symbols loaded for "C:\Work Space\OOP\1\additional_task3\build\MyString.dll"
+Plan  FLIRT signature: Microsoft VisualC v7/14 64bit runtime
+autoload.cfg: vc64rtf.sig autoloads mssdk64_win7.til
+Plan  FLIRT signature: SEH for vc64 7-14
+Marking typical code sequences...
+Flushing buffers, please wait...ok
+File 'C:\Work Space\OOP\1\additional_task3\build\MyString.dll' has been successfully loaded into the database.
+Flushing buffers, please wait...ok
+Hex-Rays Decompiler plugin has been loaded (v9.3.0.260421)
+  The hotkeys are F5: decompile, Ctrl-F5: decompile all.
+
+  Please check the Edit/Plugins menu for more information.
+Hex-rays version 9.3.0.260421 has been detected, gooMBA plugin ready to use
+Using type parser: legacy
+IDA is analysing the input file...
+You may start to explore the input file right now.
+Waiting for the end of the auto analysis...
+Using FLIRT signature: Microsoft VisualC v7/14 64bit runtime
+Using FLIRT signature: SEH for vc64 7-14
+Propagating type information...
+Function argument information has been propagated
+lumina: bad signature
+The initial autoanalysis has been finished.
+
+
+------ Creating the output file.... --------
+All done, exiting...
+Flushing buffers, please wait...ok
+Unloading IDP module C:\Work Space\IDA Professional 9.3\procs\pc.dll...

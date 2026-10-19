@@ -1,0 +1,4 @@
+01_exports.png - selected dumpbin exports and demangled overloads
+02_memory_layout.png - object field offsets and edit plan
+03_console_before.png - actual Release program output before editing
+04_console_after_expected.png - expected output after debugger editing (preparatory)

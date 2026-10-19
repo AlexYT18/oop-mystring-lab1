@@ -7,13 +7,21 @@
 #include <stdexcept>
 #include <string>
 
-class MyStringConversionError : public std::invalid_argument
+#if defined(MYSTRING_BUILD_DLL)
+#define MYSTRING_API __declspec(dllexport)
+#elif defined(MYSTRING_USE_DLL)
+#define MYSTRING_API __declspec(dllimport)
+#else
+#define MYSTRING_API
+#endif
+
+class MYSTRING_API MyStringConversionError : public std::invalid_argument
 {
 public:
     explicit MyStringConversionError(const char* message);
 };
 
-class MyString
+class MYSTRING_API MyString
 {
 public:
     using iterator = char*;
@@ -176,8 +184,8 @@ private:
                           std::size_t index) const;
 };
 
-std::ostream& operator<<(std::ostream& stream, const MyString& value);
-std::ofstream& operator<<(std::ofstream& stream, const MyString& value);
-std::ifstream& operator>>(std::ifstream& stream, MyString& value);
+MYSTRING_API std::ostream& operator<<(std::ostream& stream, const MyString& value);
+MYSTRING_API std::ofstream& operator<<(std::ofstream& stream, const MyString& value);
+MYSTRING_API std::ifstream& operator>>(std::ifstream& stream, MyString& value);
 
 #endif // _MYSTRING_H_
