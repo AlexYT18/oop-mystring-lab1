@@ -243,6 +243,66 @@ bool MyString::empty() const
     return size_ == 0;
 }
 
+MyString::iterator MyString::begin() noexcept
+{
+    return data_;
+}
+
+MyString::iterator MyString::end() noexcept
+{
+    return data_ == nullptr ? nullptr : data_ + size_;
+}
+
+MyString::const_iterator MyString::begin() const noexcept
+{
+    return data_;
+}
+
+MyString::const_iterator MyString::end() const noexcept
+{
+    return data_ == nullptr ? nullptr : data_ + size_;
+}
+
+MyString::const_iterator MyString::cbegin() const noexcept
+{
+    return begin();
+}
+
+MyString::const_iterator MyString::cend() const noexcept
+{
+    return end();
+}
+
+MyString::reverse_iterator MyString::rbegin() noexcept
+{
+    return reverse_iterator(end());
+}
+
+MyString::reverse_iterator MyString::rend() noexcept
+{
+    return reverse_iterator(begin());
+}
+
+MyString::const_reverse_iterator MyString::rbegin() const noexcept
+{
+    return const_reverse_iterator(end());
+}
+
+MyString::const_reverse_iterator MyString::rend() const noexcept
+{
+    return const_reverse_iterator(begin());
+}
+
+MyString::const_reverse_iterator MyString::rcbegin() const noexcept
+{
+    return const_reverse_iterator(cend());
+}
+
+MyString::const_reverse_iterator MyString::rcend() const noexcept
+{
+    return const_reverse_iterator(cbegin());
+}
+
 MyString& MyString::insert(int index, int count, char ch)
 {
     std::size_t checked_index = CheckedValue(index, "index must not be negative");
@@ -368,6 +428,62 @@ MyString& MyString::insert(int index, const MyString& source, int source_index, 
     return *this;
 }
 
+MyString& MyString::insert(iterator position, int count, char ch)
+{
+    return insert(static_cast<int>(iterator_index(position)), count, ch);
+}
+
+MyString& MyString::insert(iterator position, const char* source)
+{
+    return insert(static_cast<int>(iterator_index(position)), source);
+}
+
+MyString& MyString::insert(iterator position, const std::string& source)
+{
+    return insert(static_cast<int>(iterator_index(position)), source);
+}
+
+MyString& MyString::insert(iterator position, const MyString& source)
+{
+    return insert(static_cast<int>(iterator_index(position)), source);
+}
+
+MyString& MyString::insert(iterator position, const char* source, int count)
+{
+    return insert(static_cast<int>(iterator_index(position)), source, count);
+}
+
+MyString& MyString::insert(iterator position, const std::string& source, int count)
+{
+    return insert(static_cast<int>(iterator_index(position)), source, count);
+}
+
+MyString& MyString::insert(iterator position, const MyString& source, int count)
+{
+    return insert(static_cast<int>(iterator_index(position)), source, count);
+}
+
+MyString& MyString::insert(iterator position, const char* source,
+                           int source_index, int count)
+{
+    return insert(static_cast<int>(iterator_index(position)), source,
+                  source_index, count);
+}
+
+MyString& MyString::insert(iterator position, const std::string& source,
+                           int source_index, int count)
+{
+    return insert(static_cast<int>(iterator_index(position)), source,
+                  source_index, count);
+}
+
+MyString& MyString::insert(iterator position, const MyString& source,
+                           int source_index, int count)
+{
+    return insert(static_cast<int>(iterator_index(position)), source,
+                  source_index, count);
+}
+
 MyString& MyString::append(int count, char ch)
 {
     return insert(static_cast<int>(size_), count, ch);
@@ -445,6 +561,11 @@ MyString& MyString::erase(int index, int count)
     return *this;
 }
 
+MyString& MyString::erase(iterator position, int count)
+{
+    return erase(static_cast<int>(iterator_index(position)), count);
+}
+
 MyString& MyString::replace(int index, int count, const char* source)
 {
     CheckNotNull(source);
@@ -509,6 +630,66 @@ MyString& MyString::replace(int index, int count, const MyString& source,
     return *this;
 }
 
+MyString& MyString::replace(iterator position, int count, const char* source)
+{
+    return replace(static_cast<int>(iterator_index(position)), count, source);
+}
+
+MyString& MyString::replace(iterator position, int count,
+                            const std::string& source)
+{
+    return replace(static_cast<int>(iterator_index(position)), count, source);
+}
+
+MyString& MyString::replace(iterator position, int count, const MyString& source)
+{
+    return replace(static_cast<int>(iterator_index(position)), count, source);
+}
+
+MyString& MyString::replace(iterator position, int count, const char* source,
+                            int source_count)
+{
+    return replace(static_cast<int>(iterator_index(position)), count,
+                   source, source_count);
+}
+
+MyString& MyString::replace(iterator position, int count,
+                            const std::string& source, int source_count)
+{
+    return replace(static_cast<int>(iterator_index(position)), count,
+                   source, source_count);
+}
+
+MyString& MyString::replace(iterator position, int count,
+                            const MyString& source, int source_count)
+{
+    return replace(static_cast<int>(iterator_index(position)), count,
+                   source, source_count);
+}
+
+MyString& MyString::replace(iterator position, int count, const char* source,
+                            int source_index, int source_count)
+{
+    return replace(static_cast<int>(iterator_index(position)), count,
+                   source, source_index, source_count);
+}
+
+MyString& MyString::replace(iterator position, int count,
+                            const std::string& source, int source_index,
+                            int source_count)
+{
+    return replace(static_cast<int>(iterator_index(position)), count,
+                   source, source_index, source_count);
+}
+
+MyString& MyString::replace(iterator position, int count,
+                            const MyString& source, int source_index,
+                            int source_count)
+{
+    return replace(static_cast<int>(iterator_index(position)), count,
+                   source, source_index, source_count);
+}
+
 MyString MyString::substr(int index) const
 {
     std::size_t checked_index = CheckedValue(index, "index must not be negative");
@@ -532,6 +713,16 @@ MyString MyString::substr(int index, int count) const
         checked_count = size_ - checked_index;
     }
     return MyString(c_str() + checked_index, static_cast<int>(checked_count));
+}
+
+MyString MyString::substr(const_iterator position) const
+{
+    return substr(static_cast<int>(iterator_index(position)));
+}
+
+MyString MyString::substr(const_iterator position, int count) const
+{
+    return substr(static_cast<int>(iterator_index(position)), count);
 }
 
 MyString MyString::operator+(const char* source) const
@@ -746,6 +937,23 @@ std::size_t MyString::find(const MyString& source, int index) const
                      CheckedValue(index, "index must not be negative"));
 }
 
+std::size_t MyString::find(const char* source, const_iterator position) const
+{
+    return find(source, static_cast<int>(iterator_index(position)));
+}
+
+std::size_t MyString::find(const std::string& source,
+                           const_iterator position) const
+{
+    return find(source, static_cast<int>(iterator_index(position)));
+}
+
+std::size_t MyString::find(const MyString& source,
+                           const_iterator position) const
+{
+    return find(source, static_cast<int>(iterator_index(position)));
+}
+
 void MyString::ensure_capacity(std::size_t required_capacity)
 {
     if (required_capacity <= capacity_)
@@ -762,6 +970,26 @@ void MyString::ensure_capacity(std::size_t required_capacity)
     delete[] data_;
     data_ = new_data;
     capacity_ = required_capacity;
+}
+
+std::size_t MyString::iterator_index(const_iterator position) const
+{
+    const_iterator current = cbegin();
+    std::size_t index = 0;
+    while (index < size_)
+    {
+        if (current == position)
+        {
+            return index;
+        }
+        ++current;
+        ++index;
+    }
+    if (current == position)
+    {
+        return index;
+    }
+    throw std::invalid_argument("iterator does not belong to this string");
 }
 
 void MyString::assign(const char* source, std::size_t source_size)

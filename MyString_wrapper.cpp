@@ -42,7 +42,8 @@ PYBIND11_MODULE(mystring, module)
              py::return_value_policy::reference_internal)
         .def("append", static_cast<MyString& (MyString::*)(const char*, int, int)>(&MyString::append),
              py::return_value_policy::reference_internal)
-        .def("erase", &MyString::erase, py::return_value_policy::reference_internal)
+        .def("erase", static_cast<MyString& (MyString::*)(int, int)>(&MyString::erase),
+             py::return_value_policy::reference_internal)
         .def("replace", static_cast<MyString& (MyString::*)(int, int, const char*)>(&MyString::replace),
              py::return_value_policy::reference_internal)
         .def("replace", static_cast<MyString& (MyString::*)(int, int, const char*, int)>(&MyString::replace),
