@@ -21,6 +21,8 @@
 
 #include "test_except.h"
 
+#include "test_insert.h"
+
 void test() {
     test_constructors();
 
@@ -44,6 +46,8 @@ void test() {
     test_find();
 
     test_except();
+
+    test_insert_methods();
 }
 
 #endif

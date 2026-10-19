@@ -31,6 +31,7 @@ void CheckSourceRange(std::size_t source_size, std::size_t source_index,
         throw std::out_of_range("source range is out of bounds");
     }
 }
+
 }
 
 const std::size_t MyString::npos = static_cast<std::size_t>(-1);
@@ -273,15 +274,14 @@ MyString& MyString::insert(int index, const MyString& source, int source_index, 
         return *this;
     }
 
-    MyString source_copy(source.c_str() + checked_source_index,
-                         static_cast<int>(checked_count));
     std::size_t new_size = size_ + checked_count;
     std::size_t required_capacity = new_size + 1;
-    if (required_capacity <= capacity_)
+    if (required_capacity <= capacity_ && &source != this)
     {
         std::memmove(data_ + checked_index + checked_count,
                      data_ + checked_index, size_ - checked_index);
-        std::memcpy(data_ + checked_index, source_copy.c_str(), checked_count);
+        std::memcpy(data_ + checked_index,
+                    source.c_str() + checked_source_index, checked_count);
     }
     else
     {
@@ -290,7 +290,8 @@ MyString& MyString::insert(int index, const MyString& source, int source_index, 
         {
             std::memcpy(new_data, data_, checked_index);
         }
-        std::memcpy(new_data + checked_index, source_copy.c_str(), checked_count);
+        std::memcpy(new_data + checked_index,
+                    source.c_str() + checked_source_index, checked_count);
         std::size_t tail_size = size_ - checked_index;
         if (tail_size != 0)
         {
