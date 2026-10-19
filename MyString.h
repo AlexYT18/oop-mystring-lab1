@@ -3,7 +3,14 @@
 
 #include <cstddef>
 #include <iosfwd>
+#include <stdexcept>
 #include <string>
+
+class MyStringConversionError : public std::invalid_argument
+{
+public:
+    explicit MyStringConversionError(const char* message);
+};
 
 class MyString
 {
@@ -14,6 +21,9 @@ public:
     MyString(const char* source);
     MyString(const std::string& source);
     MyString(const MyString& source);
+    MyString(MyString&& source) noexcept;
+    MyString(int value);
+    MyString(double value);
     MyString(const char* source, int count);
     MyString(const std::string& source, int count);
     MyString(const MyString& source, int count);
@@ -23,6 +33,7 @@ public:
     MyString& operator=(const char* source);
     MyString& operator=(const std::string& source);
     MyString& operator=(const MyString& source);
+    MyString& operator=(MyString&& source) noexcept;
     MyString& operator=(char ch);
 
     void clear();
@@ -79,6 +90,11 @@ public:
 
     char& operator[](int index);
     const char& operator[](int index) const;
+    char& at(int index);
+    const char& at(int index) const;
+
+    int to_int() const;
+    float to_float() const;
 
     int compare(const MyString& source) const;
     bool operator==(const MyString& source) const;
@@ -107,5 +123,7 @@ private:
 };
 
 std::ostream& operator<<(std::ostream& stream, const MyString& value);
+std::ofstream& operator<<(std::ofstream& stream, const MyString& value);
+std::ifstream& operator>>(std::ifstream& stream, MyString& value);
 
 #endif // _MYSTRING_H_

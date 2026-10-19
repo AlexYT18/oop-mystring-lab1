@@ -1,8 +1,11 @@
 #include "MyString.h"
 
+#include <charconv>
 #include <cstring>
+#include <fstream>
 #include <ostream>
 #include <stdexcept>
+#include <system_error>
 
 namespace
 {
@@ -34,6 +37,11 @@ void CheckSourceRange(std::size_t source_size, std::size_t source_index,
 
 }
 
+MyStringConversionError::MyStringConversionError(const char* message)
+    : std::invalid_argument(message)
+{
+}
+
 const std::size_t MyString::npos = static_cast<std::size_t>(-1);
 
 MyString::MyString()
@@ -58,6 +66,40 @@ MyString::MyString(const MyString& source)
     : data_(nullptr), size_(0), capacity_(0)
 {
     assign(source.c_str(), source.size());
+}
+
+MyString::MyString(MyString&& source) noexcept
+    : data_(source.data_), size_(source.size_), capacity_(source.capacity_)
+{
+    source.data_ = nullptr;
+    source.size_ = 0;
+    source.capacity_ = 0;
+}
+
+MyString::MyString(int value)
+    : data_(nullptr), size_(0), capacity_(0)
+{
+    char buffer[32];
+    const std::to_chars_result result =
+        std::to_chars(buffer, buffer + sizeof(buffer), value);
+    if (result.ec != std::errc())
+    {
+        throw MyStringConversionError("failed to convert integer to MyString");
+    }
+    assign(buffer, static_cast<std::size_t>(result.ptr - buffer));
+}
+
+MyString::MyString(double value)
+    : data_(nullptr), size_(0), capacity_(0)
+{
+    char buffer[128];
+    const std::to_chars_result result =
+        std::to_chars(buffer, buffer + sizeof(buffer), value);
+    if (result.ec != std::errc())
+    {
+        throw MyStringConversionError("failed to convert floating-point value to MyString");
+    }
+    assign(buffer, static_cast<std::size_t>(result.ptr - buffer));
 }
 
 MyString::MyString(const char* source, int count)
@@ -124,6 +166,22 @@ MyString& MyString::operator=(const MyString& source)
     if (this != &source)
     {
         assign(source.c_str(), source.size());
+    }
+    return *this;
+}
+
+MyString& MyString::operator=(MyString&& source) noexcept
+{
+    if (this != &source)
+    {
+        delete[] data_;
+        data_ = source.data_;
+        size_ = source.size_;
+        capacity_ = source.capacity_;
+
+        source.data_ = nullptr;
+        source.size_ = 0;
+        source.capacity_ = 0;
     }
     return *this;
 }
@@ -532,6 +590,73 @@ const char& MyString::operator[](int index) const
     return data_[checked_index];
 }
 
+char& MyString::at(int index)
+{
+    return (*this)[index];
+}
+
+const char& MyString::at(int index) const
+{
+    return (*this)[index];
+}
+
+int MyString::to_int() const
+{
+    const char* first = c_str();
+    const char* last = first + size_;
+    if (first == last)
+    {
+        throw MyStringConversionError("MyString does not contain an integer");
+    }
+
+    if (*first == '+')
+    {
+        ++first;
+        if (first == last)
+        {
+            throw MyStringConversionError("MyString does not contain an integer");
+        }
+    }
+
+    int value = 0;
+    const std::from_chars_result result = std::from_chars(first, last, value);
+    if (result.ec != std::errc() || result.ptr != last)
+    {
+        throw MyStringConversionError("MyString does not contain a valid integer");
+    }
+    return value;
+}
+
+float MyString::to_float() const
+{
+    const char* first = c_str();
+    const char* last = first + size_;
+    if (first == last)
+    {
+        throw MyStringConversionError(
+            "MyString does not contain a floating-point value");
+    }
+
+    if (*first == '+')
+    {
+        ++first;
+        if (first == last)
+        {
+            throw MyStringConversionError(
+                "MyString does not contain a floating-point value");
+        }
+    }
+
+    float value = 0.0F;
+    const std::from_chars_result result = std::from_chars(first, last, value);
+    if (result.ec != std::errc() || result.ptr != last)
+    {
+        throw MyStringConversionError(
+            "MyString does not contain a valid floating-point value");
+    }
+    return value;
+}
+
 int MyString::compare(const MyString& source) const
 {
     std::size_t common_size = size_ < source.size_ ? size_ : source.size_;
@@ -689,18 +814,122 @@ std::size_t MyString::find_data(const char* source, std::size_t source_size,
         return npos;
     }
 
-    for (std::size_t current = index; current <= size_ - source_size; ++current)
+    const std::size_t alphabet_size = 256;
+    if (source_size > (static_cast<std::size_t>(-1) / alphabet_size) - 1)
     {
-        if (std::memcmp(data_ + current, source, source_size) == 0)
-        {
-            return current;
-        }
+        throw std::length_error("source is too large");
     }
+
+    const std::size_t node_count = source_size + 1;
+    const std::size_t transition_count = node_count * alphabet_size;
+    const std::size_t no_transition = npos;
+
+    std::size_t* transitions = nullptr;
+    std::size_t* failure = nullptr;
+    std::size_t* queue = nullptr;
+
+    try
+    {
+        transitions = new std::size_t[transition_count];
+        failure = new std::size_t[node_count];
+        queue = new std::size_t[node_count];
+
+        for (std::size_t i = 0; i < transition_count; ++i)
+        {
+            transitions[i] = no_transition;
+        }
+
+        for (std::size_t i = 0; i < source_size; ++i)
+        {
+            transitions[i * alphabet_size +
+                        static_cast<unsigned char>(source[i])] = i + 1;
+        }
+
+        failure[0] = 0;
+        std::size_t queue_size = 0;
+        for (std::size_t symbol = 0; symbol < alphabet_size; ++symbol)
+        {
+            std::size_t transition = transitions[symbol];
+            if (transition == no_transition)
+            {
+                transitions[symbol] = 0;
+            }
+            else
+            {
+                failure[transition] = 0;
+                queue[queue_size++] = transition;
+            }
+        }
+
+        for (std::size_t queue_index = 0; queue_index < queue_size; ++queue_index)
+        {
+            std::size_t node = queue[queue_index];
+            std::size_t failure_node = failure[node];
+
+            for (std::size_t symbol = 0; symbol < alphabet_size; ++symbol)
+            {
+                std::size_t& transition =
+                    transitions[node * alphabet_size + symbol];
+                if (transition == no_transition)
+                {
+                    transition = transitions[failure_node * alphabet_size + symbol];
+                }
+                else
+                {
+                    failure[transition] =
+                        transitions[failure_node * alphabet_size + symbol];
+                    queue[queue_size++] = transition;
+                }
+            }
+        }
+
+        std::size_t node = 0;
+        for (std::size_t current = index; current < size_; ++current)
+        {
+            node = transitions[node * alphabet_size +
+                                static_cast<unsigned char>(data_[current])];
+            if (node == source_size)
+            {
+                delete[] queue;
+                delete[] failure;
+                delete[] transitions;
+                return current + 1 - source_size;
+            }
+        }
+
+        delete[] queue;
+        delete[] failure;
+        delete[] transitions;
+    }
+    catch (...)
+    {
+        delete[] queue;
+        delete[] failure;
+        delete[] transitions;
+        throw;
+    }
+
     return npos;
 }
 
 std::ostream& operator<<(std::ostream& stream, const MyString& value)
 {
     stream.write(value.c_str(), static_cast<std::streamsize>(value.size()));
+    return stream;
+}
+
+std::ofstream& operator<<(std::ofstream& stream, const MyString& value)
+{
+    stream.write(value.c_str(), static_cast<std::streamsize>(value.size()));
+    return stream;
+}
+
+std::ifstream& operator>>(std::ifstream& stream, MyString& value)
+{
+    std::string buffer;
+    if (stream >> buffer)
+    {
+        value = buffer;
+    }
     return stream;
 }
