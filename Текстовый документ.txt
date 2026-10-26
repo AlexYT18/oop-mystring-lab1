@@ -1,79 +1,37 @@
-    MyString str1("Hello")
-             ^^^^
-SyntaxError: invalid syntax
->>> str1 = MyString("Hello)
-  File "<stdin>", line 1
-    str1 = MyString("Hello)
-                    ^
-SyntaxError: unterminated string literal (detected at line 1)
->>> str1 = MyString("Hello")
->>> printf(str1)
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-    printf(str1)
-    ^^^^^^
-NameError: name 'printf' is not defined. Did you mean: 'print'?
->>> print(str1) 
-Hello
->>> print(str1.insert(3,str1))
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-    print(str1.insert(3,str1))
-          ~~~~~~~~~~~^^^^^^^^
-TypeError: insert(): incompatible function arguments. The following argument types are supported:
-    1. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: typing.SupportsInt | typing.SupportsIndex, arg2: str) -> mystring.MyString
-    2. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str) -> mystring.MyString
-    3. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str, arg2: typing.SupportsInt | typing.SupportsIndex) -> mystring.MyString
-    4. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str, arg2: typing.SupportsInt | typing.SupportsIndex, arg3: typing.SupportsInt | typing.SupportsIndex) -> mystring.MyString
-
-Invoked with: <mystring.MyString object at 0x000001EE0FCC5230>, 3, <mystring.MyString object at 0x000001EE0FCC5230>
->>> str1.insert(3,str1)       
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-    str1.insert(3,str1)
-    ~~~~~~~~~~~^^^^^^^^
-TypeError: insert(): incompatible function arguments. The following argument types are supported:
-    1. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: typing.SupportsInt | typing.SupportsIndex, arg2: str) -> mystring.MyString
-    2. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str) -> mystring.MyString
-    3. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str, arg2: typing.SupportsInt | typing.SupportsIndex) -> mystring.MyString
-    4. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str, arg2: typing.SupportsInt | typing.SupportsIndex, arg3: typing.SupportsInt | typing.SupportsIndex) -> mystring.MyString
-
-Invoked with: <mystring.MyString object at 0x000001EE0FCC5230>, 3, <mystring.MyString object at 0x000001EE0FCC5230>
->>> a = MyString(1000,"a")                                                                     
->>> print(a)
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
->>> a.clear 
-<bound method pybind11_detail_function_record_v1_msvc_mt_mscver1951.clear of <mystring.MyString object at 0x000001EE0FD2CA30>>
->>> print(a)
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
->>> a.clean               
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-    a.clean
-AttributeError: 'mystring.MyString' object has no attribute 'clean'. Did you mean: 'clear'?
+PS C:\Work Space\OOP\1> $env:PYTHONPATH = "$PWD\build"
+PS C:\Work Space\OOP\1> python
+Python 3.14.7 (tags/v3.14.7:823f032, Aug  5 2026, 10:51:32) [MSC v.1944 64 bit (AMD64)] on win32
+Type "help", "copyright", "credits" or "license" for more information.
+Ctrl click to launch VS Code Native REPL (https://aka.ms/python-native-repl)
+>>> from mystring import MyString
+>>> a = MyString(1000,"a")
+>>> print(a,a.capacity())
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa 1001
 >>> a.clear()
->>> print(a) 
-
->>> a.insert(0,"1234567890")
-<mystring.MyString object at 0x000001EE0FD2CA30>
->>> print(a)                
-1234567890
->>> a.insert(4,s,5)         
+>>> print(a,a.capacity())
+ 1001
+>>> a.inser(0,"bbbbb")
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-    a.insert(4,s,5)
-               ^
-NameError: name 's' is not defined
->>> a.insert(4,a,5)
+  File "<python-input-5>", line 1, in <module>
+    a.inser(0,"bbbbb")
+    ^^^^^^^
+AttributeError: 'mystring.MyString' object has no attribute 'inser'. Did you mean: 'insert'?
+>>> a.insert(0,"bbbbb")
+<mystring.MyString object at 0x00000208569A6370>
+>>> a.insert(3,"x",200)
 Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-    a.insert(4,a,5)
-    ~~~~~~~~^^^^^^^
-TypeError: insert(): incompatible function arguments. The following argument types are supported:
-    1. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: typing.SupportsInt | typing.SupportsIndex, arg2: str) -> mystring.MyString
-    2. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str) -> mystring.MyString
-    3. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str, arg2: typing.SupportsInt | typing.SupportsIndex) -> mystring.MyString
-    4. (self: mystring.MyString, arg0: typing.SupportsInt | typing.SupportsIndex, arg1: str, arg2: typing.SupportsInt | typing.SupportsIndex, arg3: typing.SupportsInt | typing.SupportsIndex) -> mystring.MyString
-
-Invoked with: <mystring.MyString object at 0x000001EE0FD2CA30>, 4, <mystring.MyString object at 0x000001EE0FD2CA30>, 5
->>> ^A
+  File "<python-input-7>", line 1, in <module>
+    a.insert(3,"x",200)
+    ~~~~~~~~^^^^^^^^^^^
+IndexError: source range is out of bounds
+>>> a.insert(3,"x",20)
+Traceback (most recent call last):
+  File "<python-input-8>", line 1, in <module>
+    a.insert(3,"x",20)
+    ~~~~~~~~^^^^^^^^^^
+IndexError: source range is out of bounds
+>>> a.insert(3,200,"x")
+<mystring.MyString object at 0x00000208569A6370>
+>>> print(a,a.capacity())
+bbbxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxbb 1001
+>>> 
