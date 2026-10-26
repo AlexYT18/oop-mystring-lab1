@@ -250,12 +250,62 @@ MyString& MyString::insert(int index, const MyString& source, int count)
 
 MyString& MyString::insert(int index, const char* source, int source_index, int count)
 {
-    return insert(index, MyString(source), source_index, count);
+    std::size_t checked_index = CheckedValue(index, "index must not be negative");
+    std::size_t checked_source_index = CheckedValue(
+        source_index, "source index must not be negative");
+    std::size_t checked_count = CheckedValue(count, "count must not be negative");
+    CheckNotNull(source);
+
+    std::size_t source_size = std::strlen(source);
+    if (checked_index > size_)
+    {
+        throw std::out_of_range("index is out of bounds");
+    }
+    CheckSourceRange(source_size, checked_source_index, checked_count);
+    if (checked_count == 0)
+    {
+        return *this;
+    }
+
+    std::size_t new_size = size_ + checked_count;
+    std::size_t required_capacity = new_size + 1;
+    if (required_capacity <= capacity_ && source != data_)
+    {
+        std::memmove(data_ + checked_index + checked_count,
+                     data_ + checked_index, size_ - checked_index);
+        std::memmove(data_ + checked_index,
+                     source + checked_source_index, checked_count);
+    }
+    else
+    {
+        char* new_data = new char[required_capacity];
+        if (checked_index != 0)
+        {
+            std::memcpy(new_data, data_, checked_index);
+        }
+        std::memcpy(new_data + checked_index,
+                    source + checked_source_index, checked_count);
+        std::size_t tail_size = size_ - checked_index;
+        if (tail_size != 0)
+        {
+            std::memcpy(new_data + checked_index + checked_count,
+                        data_ + checked_index, tail_size);
+        }
+        new_data[new_size] = '\0';
+
+        delete[] data_;
+        data_ = new_data;
+        capacity_ = required_capacity;
+    }
+
+    size_ = new_size;
+    data_[size_] = '\0';
+    return *this;
 }
 
 MyString& MyString::insert(int index, const std::string& source, int source_index, int count)
 {
-    return insert(index, MyString(source), source_index, count);
+    return insert(index, source.c_str(), source_index, count);
 }
 
 MyString& MyString::insert(int index, const MyString& source, int source_index, int count)
