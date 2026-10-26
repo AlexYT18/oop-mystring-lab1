@@ -28,6 +28,12 @@ PYBIND11_MODULE(mystring, module)
              py::return_value_policy::reference_internal)
         .def("insert", static_cast<MyString& (MyString::*)(int, const char*, int, int)>(&MyString::insert),
              py::return_value_policy::reference_internal)
+        .def("insert", static_cast<MyString& (MyString::*)(int, const MyString&)>(&MyString::insert),
+             py::return_value_policy::reference_internal)
+        .def("insert", static_cast<MyString& (MyString::*)(int, const MyString&, int)>(&MyString::insert),
+             py::return_value_policy::reference_internal)
+        .def("insert", static_cast<MyString& (MyString::*)(int, const MyString&, int, int)>(&MyString::insert),
+             py::return_value_policy::reference_internal)
         .def("append", static_cast<MyString& (MyString::*)(int, char)>(&MyString::append),
              py::return_value_policy::reference_internal)
         .def("append", static_cast<MyString& (MyString::*)(const char*)>(&MyString::append),

@@ -276,6 +276,44 @@ MyString& MyString::insert(int index, const MyString& source, int source_index, 
 
     std::size_t new_size = size_ + checked_count;
     std::size_t required_capacity = new_size + 1;
+    if (required_capacity <= capacity_ && &source == this)
+    {
+        std::size_t prefix_count = 0;
+        if (checked_source_index < checked_index)
+        {
+            prefix_count = checked_index - checked_source_index;
+            if (prefix_count > checked_count)
+            {
+                prefix_count = checked_count;
+            }
+        }
+
+        std::memmove(data_ + checked_index + checked_count,
+                     data_ + checked_index, size_ - checked_index);
+
+        if (prefix_count != 0)
+        {
+            std::memmove(data_ + checked_index,
+                         data_ + checked_source_index, prefix_count);
+        }
+
+        std::size_t suffix_count = checked_count - prefix_count;
+        if (suffix_count != 0)
+        {
+            std::size_t suffix_source_index = checked_source_index + prefix_count;
+            if (suffix_source_index < checked_index)
+            {
+                suffix_source_index = checked_index;
+            }
+            std::memmove(data_ + checked_index + prefix_count,
+                         data_ + suffix_source_index + checked_count,
+                         suffix_count);
+        }
+
+        size_ = new_size;
+        data_[size_] = '\0';
+        return *this;
+    }
     if (required_capacity <= capacity_ && &source != this)
     {
         std::memmove(data_ + checked_index + checked_count,
